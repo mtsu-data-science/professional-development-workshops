@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="flights_canvas" width="500" height="400" style="border:1px solid #000000;"></canvas>
+
+<img id="map" src="usa.jpg" alt="Map of USA" width="0" height="0">
+
+<script>
+var c = document.getElementById("flights_canvas");
+var ctx = c.getContext("2d");
+var map = document.getElementById("map");
+
+const blip = new Audio("blipSelect.wav");
+
+var s_x = 55
+var s_y = 42
+
+var d_x = 253
+var d_y = 296
+
+var c_x = 335
+var c_y = 153
+
+var t_x = 413
+var t_y = 359
+
+var c_color="#00FFFF"
+var d_color="#00FFFF"
+
+var c_clicked=false
+var d_clicked=false
+
+function update(){
+	ctx.setTransform(1,0,0,1,0,0);
+	ctx.clearRect(0,0,1000,1000);
+
+	ctx.drawImage(map,0,0,500,400);
+	ctx.lineWidth = 3;
+	ctx.strokeStyle = "#0000FF";
+
+	ctx.moveTo(s_x, s_y);
+	ctx.lineTo(d_x, d_y);
+	ctx.lineTo(t_x, t_y);
+	ctx.stroke();
+
+	ctx.moveTo(s_x, s_y);
+	ctx.lineTo(c_x, c_y);
+	ctx.lineTo(t_x, t_y);
+	ctx.stroke();
+
+	ctx.fillStyle = d_color;
+	ctx.fillRect(d_x-10,d_y-10,20,20);
+	ctx.fillStyle = c_color;
+	ctx.fillRect(c_x-10,c_y-10,20,20);
+
+
+	if (c_clicked){
+		ctx.fillStyle = "#EEEEEE";
+		ctx.fillRect(40,40,420,320);
+
+		ctx.fillStyle = "#111111";
+		ctx.font = "24px Arial";
+		ctx.fillText("YOUR FLIGHT HAS BEEN DELAYED",50,80);
+		ctx.font = "18px Arial";
+		ctx.fillText("This airport is bad.",50,120,300);
+	}
+
+	if (d_clicked){
+		ctx.fillStyle = "#EEEEEE";
+		ctx.fillRect(40,40,420,320);
+		ctx.fillStyle = "#111111";
+
+		ctx.font = "24px Arial";
+		ctx.fillText("YOUR FLIGHT IS ON TIME",50,80);
+		ctx.font = "18px Arial";
+		ctx.fillText("This airport rocks.",50,120,300);
+	}
+}
+
+function distance(ax,ay,bx,by){
+	return Math.sqrt((Math.pow(ax-bx,2))+(Math.pow(ay-by,2)))
+}
+
+c.addEventListener('click',function(e){
+	console.log(e.clientX,e.clientY);
+	var mx=e.clientX
+	var my=e.clientY
+
+	if (distance(mx,my,c_x,c_y) < 30 && (!d_clicked && !c_clicked)){
+		console.log("Chicago clicked")
+		blip.play()
+		c_clicked=1
+	}
+
+	if (distance(mx,my,d_x,d_y) < 30 && (!d_clicked && !c_clicked)){
+		console.log("Dallas clicked")
+		blip.play()
+		d_clicked=1
+	}
+
+        update();
+},false);
+
+c.addEventListener('mousemove',function(e){
+	var mx=e.clientX
+	var my=e.clientY
+
+	if (distance(mx,my,c_x,c_y) < 30 && (!d_clicked && !c_clicked)){
+		c_color = "#0000FF";
+	}else{
+		c_color = "#00FFFF";
+	}
+
+	if (distance(mx,my,d_x,d_y) < 30 && (!d_clicked && !c_clicked)){
+		d_color = "#0000FF";
+	}else{
+		d_color = "#00FFFF";
+	}
+
+        update();
+},false);
+
+update();
+</script>
+</body>
+</html>
